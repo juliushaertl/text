@@ -46,6 +46,7 @@ import MDI_FormatQuote from 'vue-material-design-icons/FormatQuoteClose'
 import MDI_FormatStrikethrough from 'vue-material-design-icons/FormatStrikethrough'
 import MDI_FormatUnderline from 'vue-material-design-icons/FormatUnderline'
 import MDI_Help from 'vue-material-design-icons/HelpCircle'
+import MDI_ImageBroken from 'vue-material-design-icons/ImageBrokenVariant'
 import MDI_Images from 'vue-material-design-icons/ImageMultipleOutline'
 import MDI_Info from 'vue-material-design-icons/Information'
 import MDI_Link from 'vue-material-design-icons/Link'
@@ -58,6 +59,7 @@ import MDI_TableAddColumnBefore from 'vue-material-design-icons/TableColumnPlusB
 import MDI_TableAddRowAfter from 'vue-material-design-icons/TableRowPlusAfter'
 import MDI_TableAddRowBefore from 'vue-material-design-icons/TableRowPlusBefore'
 import MDI_TableSettings from 'vue-material-design-icons/TableCog'
+import MDI_TrashCan from 'vue-material-design-icons/TrashCan'
 import MDI_Undo from 'vue-material-design-icons/ArrowULeftTop'
 import MDI_Upload from 'vue-material-design-icons/Upload'
 import MDI_Warn from 'vue-material-design-icons/Alert'
@@ -110,6 +112,7 @@ export const FormatQuote = makeIcon(MDI_FormatQuote)
 export const FormatStrikethrough = makeIcon(MDI_FormatStrikethrough)
 export const FormatUnderline = makeIcon(MDI_FormatUnderline)
 export const Help = makeIcon(MDI_Help)
+export const ImageBroken = makeIcon(MDI_ImageBroken)
 export const Images = makeIcon(MDI_Images)
 export const Info = makeIcon(MDI_Info)
 export const Link = makeIcon(MDI_Link)
@@ -122,6 +125,7 @@ export const TableAddColumnBefore = makeIcon(MDI_TableAddColumnBefore)
 export const TableAddRowAfter = makeIcon(MDI_TableAddRowAfter)
 export const TableAddRowBefore = makeIcon(MDI_TableAddRowBefore)
 export const TableSettings = makeIcon(MDI_TableSettings)
+export const TrashCan = makeIcon(MDI_TrashCan)
 export const Undo = makeIcon(MDI_Undo)
 export const Upload = makeIcon(MDI_Upload)
 export const Warn = makeIcon(MDI_Warn)

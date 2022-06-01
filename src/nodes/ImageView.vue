@@ -22,38 +22,47 @@
 
 <template>
 	<NodeViewWrapper>
-		<div class="image"
+		<div class="image image-view"
 			data-component="image-view"
-			:class="{'icon-loading': !loaded}"
+			:class="{'icon-loading': !loaded, 'image-view--failed': failed}"
 			:data-src="src">
-			<div v-if="imageLoaded && isSupportedImage"
+			<small v-if="errorMessage" class="image__error-message">
+				{{ errorMessage }}
+			</small>
+			<div v-if="canDisplayImage"
 				v-click-outside="() => showIcons = false"
 				class="image__view"
 				@click="showIcons = true"
 				@mouseover="showIcons = true"
 				@mouseleave="showIcons = false">
 				<transition name="fade">
-					<img v-show="loaded"
-						:src="imageUrl"
-						class="image__main"
-						@load="onLoaded">
+					<template v-if="!failed">
+						<img v-show="loaded"
+							:src="imageUrl"
+							class="image__main"
+							@load="onLoaded">
+					</template>
+					<template v-else>
+						<ImageBroken class="image__main image__main--broken-icon" :size="100" />
+					</template>
 				</transition>
 				<transition name="fade">
 					<div v-show="loaded" class="image__caption">
 						<input ref="altInput"
 							type="text"
+							class="image__caption__input"
 							:value="alt"
 							@keyup.enter="updateAlt()">
 						<div v-if="editor.isEditable && showIcons"
-							class="trash-icon"
+							class="image__caption__delete"
 							title="Delete this image"
 							@click="deleteNode">
-							<TrashCanIcon />
+							<TrashCan />
 						</div>
 					</div>
 				</transition>
 			</div>
-			<div v-else>
+			<div v-else class="image-view__cant_display">
 				<transition name="fade">
 					<div v-show="loaded">
 						<a :href="internalLinkOrImage" target="_blank">
@@ -80,7 +89,8 @@ import { generateUrl, generateRemoteUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 import { NodeViewWrapper } from '@tiptap/vue-2'
 import ClickOutside from 'vue-click-outside'
-import TrashCanIcon from 'vue-material-design-icons/TrashCan.vue'
+// import TrashCanIcon from 'vue-material-design-icons/TrashCan.vue'
+import { ImageBroken, TrashCan } from '../components/icons.js'
 import store from './../mixins/store.js'
 
 const imageMimes = [
@@ -112,10 +122,21 @@ const getQueryVariable = (src, variable) => {
 	}
 }
 
+class ErrorLoadImage extends Error {
+
+	constructor(reason, imageUrl) {
+		super(reason?.message || t('text', 'Fail to load image'))
+		this.reason = reason
+		this.imageUrl = imageUrl
+	}
+
+}
+
 export default {
 	name: 'ImageView',
 	components: {
-		TrashCanIcon,
+		ImageBroken,
+		TrashCan,
 		NodeViewWrapper,
 	},
 	directives: {
@@ -132,9 +153,21 @@ export default {
 			failed: false,
 			showIcons: false,
 			imageUrl: null,
+			errorMessage: null,
 		}
 	},
 	computed: {
+		canDisplayImage() {
+			if (!this.isSupportedImage) {
+				return false
+			}
+
+			if (this.failed && this.loaded) {
+				return true
+			}
+
+			return this.loaded && this.imageLoaded
+		},
 		currentSession() {
 			return this.$store.state.currentSession
 		},
@@ -249,11 +282,11 @@ export default {
 			this.failed = true
 			this.imageLoaded = false
 			this.loaded = true
+			this.errorMessage = t('text', 'Unsuported image')
 			return
 		}
-		this.init().catch((e) => {
-			this.onImageLoadFailure()
-		})
+		this.init()
+			.catch(this.onImageLoadFailure)
 	},
 	methods: {
 		async init() {
@@ -274,16 +307,17 @@ export default {
 			// if it starts with '.attachments.1234/'
 			if (this.src.match(/^\.attachments\.\d+\//)) {
 				// try the webdav url
-				return this.loadImage(this.davUrl).catch((e) => {
-					// try the attachment API
-					const imageFileName = decodeURIComponent(this.src.replace(/\.attachments\.\d+\//, '').split('?')[0])
-					const textApiUrl = this.getTextApiUrl(imageFileName)
-					return this.loadImage(textApiUrl).then(() => {
+				return this.loadImage(this.davUrl)
+					.catch((e) => {
+						// try the attachment API
+						const imageFileName = decodeURIComponent(this.src.replace(/\.attachments\.\d+\//, '').split('?')[0])
+						const textApiUrl = this.getTextApiUrl(imageFileName)
 						// TODO if attachment works, rewrite the url with correct document ID
+						return this.loadImage(textApiUrl)
 					})
-				})
 			}
-			this.loadImage(this.davUrl)
+
+			return this.loadImage(this.davUrl)
 		},
 		async loadImage(imageUrl) {
 			return new Promise((resolve, reject) => {
@@ -291,18 +325,20 @@ export default {
 				img.onload = () => {
 					this.imageUrl = imageUrl
 					this.imageLoaded = true
-					resolve()
+					this.loaded = true
+					resolve(imageUrl)
 				}
 				img.onerror = (e) => {
-					reject(e)
+					reject(new ErrorLoadImage(e, imageUrl))
 				}
 				img.src = imageUrl
 			})
 		},
-		onImageLoadFailure() {
+		onImageLoadFailure(err) {
 			this.failed = true
 			this.imageLoaded = false
 			this.loaded = true
+			this.errorMessage = err.message
 		},
 		updateAlt() {
 			this.alt = this.$refs.altInput.value
@@ -363,6 +399,10 @@ export default {
 		height: 100px;
 	}
 
+	.image__main--broken-icon, .image__error-message {
+		color: var(--color-error);
+	}
+
 	.image__view {
 		text-align: center;
 		position: relative;
@@ -374,6 +414,11 @@ export default {
 
 	.image__main {
 		max-height: calc(100vh - 50px - 50px);
+	}
+
+	.image__error-message {
+		display: block;
+		text-align: center;
 	}
 
 	.fade-enter-active {
@@ -388,13 +433,15 @@ export default {
 		opacity: 0;
 	}
 
-	.trash-icon {
+	.image__caption__delete {
 		position: absolute;
 		right: 0;
 		display: flex;
 		justify-content: flex-end;
 		align-items: center;
-		svg {
+		width: 20px;
+		height: 20px;
+		&, svg {
 			cursor: pointer;
 		}
 	}
