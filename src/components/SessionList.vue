@@ -41,7 +41,7 @@
 		</button>
 		<template #default>
 			<div class="session-menu">
-				<p class="last-saved">Last saved: {{ lastSavedString }}</p>
+				<p class="last-saved">{{ t('text', 'Last saved') }}: {{ lastSavedString }}</p>
 				<ul>
 					<slot />
 					<li v-for="session in participantsPopover"
