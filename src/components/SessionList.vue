@@ -41,6 +41,7 @@
 		</button>
 		<template #default>
 			<div class="session-menu">
+				<p class="last-saved">Last saved: {{ lastSavedString }}</p>
 				<ul>
 					<slot />
 					<li v-for="session in participantsPopover"
@@ -95,6 +96,10 @@ export default {
 			type: Object,
 			default: () => { return {} },
 		},
+		lastSavedString: {
+			type: String,
+			default: ''
+		}
 	},
 	data() {
 		return {
@@ -211,5 +216,9 @@ export default {
 	.hint {
 		margin: 8px;
 		color: var(--color-text-maxcontrast);
+	}
+
+	.last-saved {
+		padding: 6px;
 	}
 </style>
