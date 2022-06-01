@@ -36,7 +36,7 @@
 					:disable-menu="true"
 					:show-user-status="false"
 					:disable-tooltip="true"
-					:size="44" />
+					:size="36" />
 			</div>
 		</button>
 		<template #default>
@@ -53,7 +53,7 @@
 								:disable-menu="true"
 								:show-user-status="false"
 								:disable-tooltip="true"
-								:size="32" />
+								:size="36" />
 						</div>
 						{{ session.guestName ? session.guestName : session.displayName }}
 					</li>
@@ -131,7 +131,6 @@ export default {
 		sessionStyle() {
 			return (session) => {
 				return {
-					'border-color': session.color,
 					'background-color': session.color + ' !important',
 				}
 			}
@@ -165,15 +164,16 @@ export default {
 		}
 
 		.avatar-wrapper {
-			margin: 0 -8px 0 0;
-			height: 44px;
-			width: 44px;
+			margin: 0 -18px 0 0;
+			height: 36px;
+			width: 36px;
+			border-color: var(--color-main-background);
 		}
 
 		.icon-more, .icon-group, .icon-settings-dark {
 			background-color: var(--color-background-dark);
-			width: 44px;
-			height: 44px;
+			width: 38px;
+			height: 38px;
 			margin: 0 6px 0 0;
 		}
 	}
@@ -196,8 +196,8 @@ export default {
 			padding: 6px;
 
 			.avatar-wrapper {
-				height: 32px;
-				width: 32px;
+				height: 36px;
+				width: 36px;
 				margin-right: 6px;
 			}
 		}
