@@ -54,10 +54,14 @@
 					:autohide="autohide"
 					:loaded.sync="menubarLoaded">
 					<div class="text-editor__session-list">
-						<div v-tooltip="lastSavedStatusTooltip" class="save-status" :class="lastSavedStatusClass">
+						<div v-if="isMobile" v-tooltip="lastSavedStatusTooltip" :class="saveStatusClass" />
+						<div v-else
+							v-tooltip="lastSavedStatusTooltip"
+							class="save-status"
+							:class="lastSavedStatusClass">
 							{{ lastSavedStatus }}
 						</div>
-						<SessionList :sessions="filteredSessions" :lastSavedString="lastSavedString">
+						<SessionList :sessions="filteredSessions" :last-saved-string="lastSavedString">
 							<GuestNameDialog v-if="isPublic && currentSession.guestName" />
 						</SessionList>
 					</div>
@@ -258,10 +262,6 @@ export default {
 		lastSavedStatusClass() {
 			return this.syncError && this.lastSavedString !== '' ? 'error' : ''
 		},
-		saveStatusClass() {
-			if (this.syncError && this.lastSavedString !== '') return 'save-error'
-			return this.dirtyStateIndicator ? 'saving-status' : 'saved-status'
-		},
 		dirtyStateIndicator() {
 			return this.hasUnpushedChanges || this.hasUnsavedChanges
 		},
@@ -321,6 +321,10 @@ export default {
 					...this.document,
 				},
 			}
+		},
+		saveStatusClass() {
+			if (this.syncError && this.lastSavedString !== '') return 'save-error'
+			return this.dirtyStateIndicator ? 'saving-status' : 'saved-status'
 		},
 	},
 	watch: {
@@ -842,9 +846,9 @@ export default {
 		color: var(--color-text-lighter);
 		position: relative;
 		background-color: white;
-		width: 34px !important;
-		height: 34px !important;
-		left: 25px;
+		width: 32px !important;
+		height: 32px !important;
+		left: 25%;
 		z-index: 2;
 		top: 0px;
 	}
@@ -853,7 +857,6 @@ export default {
 		border: 2px solid #04AA6D;
 		border-radius: 50%;
 	}
-
 	.saving-status {
 		border: 2px solid #f3f3f3;
 		border-top: 2px solid #3498db;
@@ -864,6 +867,7 @@ export default {
 		0% { transform: rotate(0deg); }
 		100% { transform: rotate(360deg); }
 	}
+
 </style>
 
 <style lang="scss">

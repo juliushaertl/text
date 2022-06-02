@@ -41,7 +41,9 @@
 		</button>
 		<template #default>
 			<div class="session-menu">
-				<p class="last-saved">{{ t('text', 'Last saved') }}: {{ lastSavedString }}</p>
+				<p class="last-saved">
+					{{ t('text', 'Last saved') }}: {{ lastSavedString }}
+				</p>
 				<ul>
 					<slot />
 					<li v-for="session in participantsPopover"
@@ -98,8 +100,8 @@ export default {
 		},
 		lastSavedString: {
 			type: String,
-			default: ''
-		}
+			default: '',
+		},
 	},
 	data() {
 		return {
@@ -135,8 +137,15 @@ export default {
 		},
 		sessionStyle() {
 			return (session) => {
-				return {
-					'background-color': session.color + ' !important',
+				if (this.showAuthorAnnotations) {
+					return {
+						border: 'solid 2px ' + session.color + ' !important',
+					}
+				} else {
+					return {
+						border: 'solid 2px var(--color-main-background) !important',
+						'background-color': session.color + ' !important',
+					}
 				}
 			}
 		},
@@ -172,13 +181,12 @@ export default {
 			margin: 0 -18px 0 0;
 			height: 36px;
 			width: 36px;
-			border-color: var(--color-main-background);
 		}
 
 		.icon-more, .icon-group, .icon-settings-dark {
 			background-color: var(--color-background-dark);
-			width: 38px;
-			height: 38px;
+			width: 36px;
+			height: 36px;
 			margin: 0 6px 0 0;
 		}
 	}
