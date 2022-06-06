@@ -89,21 +89,10 @@ import { generateUrl, generateRemoteUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 import { NodeViewWrapper } from '@tiptap/vue-2'
 import ClickOutside from 'vue-click-outside'
-// import TrashCanIcon from 'vue-material-design-icons/TrashCan.vue'
 import { Image as ImageIcon, TrashCan } from '../components/icons.js'
 import store from './../mixins/store.js'
 
-const imageMimes = [
-	'image/png',
-	'image/jpeg',
-	'image/jpg',
-	'image/gif',
-	'image/x-xbitmap',
-	'image/x-ms-bmp',
-	'image/bmp',
-	'image/svg+xml',
-	'image/webp',
-]
+import { mimetypesImages as IMAGE_MIMES } from '../helpers/mime.js'
 
 const getQueryVariable = (src, variable) => {
 	const query = src.split('?')[1]
@@ -239,7 +228,7 @@ export default {
 		},
 		isSupportedImage() {
 			return typeof this.mime === 'undefined'
-				|| imageMimes.indexOf(this.mime) !== -1
+				|| IMAGE_MIMES.indexOf(this.mime) !== -1
 		},
 		internalLinkOrImage() {
 			const fileId = getQueryVariable(this.src, 'fileId')
