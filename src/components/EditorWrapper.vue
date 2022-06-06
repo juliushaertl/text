@@ -62,6 +62,9 @@
 							{{ lastSavedStatus }}
 						</div>
 						<SessionList :sessions="filteredSessions" :last-saved-string="lastSavedString">
+							<p slot="lastSaved" class="last-saved">
+								{{ t('text', 'Last saved') }}: {{ lastSavedString }}
+							</p>
 							<GuestNameDialog v-if="isPublic && currentSession.guestName" />
 						</SessionList>
 					</div>
@@ -323,7 +326,10 @@ export default {
 			}
 		},
 		saveStatusClass() {
-			if (this.syncError && this.lastSavedString !== '') return 'save-error'
+			if (this.syncError && this.lastSavedString !== '') {
+				return 'save-error'
+			}
+
 			return this.dirtyStateIndicator ? 'saving-status' : 'saved-status'
 		},
 	},
@@ -866,6 +872,10 @@ export default {
 	@keyframes spin {
 		0% { transform: rotate(0deg); }
 		100% { transform: rotate(360deg); }
+	}
+
+	.last-saved {
+		padding: 6px;
 	}
 
 </style>
