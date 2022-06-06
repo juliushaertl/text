@@ -46,6 +46,7 @@ import MDI_FormatQuote from 'vue-material-design-icons/FormatQuoteClose'
 import MDI_FormatStrikethrough from 'vue-material-design-icons/FormatStrikethrough'
 import MDI_FormatUnderline from 'vue-material-design-icons/FormatUnderline'
 import MDI_Help from 'vue-material-design-icons/HelpCircle'
+import MDI_Image from 'vue-material-design-icons/ImageOutline'
 import MDI_ImageBroken from 'vue-material-design-icons/ImageBrokenVariant'
 import MDI_Images from 'vue-material-design-icons/ImageMultipleOutline'
 import MDI_Info from 'vue-material-design-icons/Information'
@@ -112,6 +113,7 @@ export const FormatQuote = makeIcon(MDI_FormatQuote)
 export const FormatStrikethrough = makeIcon(MDI_FormatStrikethrough)
 export const FormatUnderline = makeIcon(MDI_FormatUnderline)
 export const Help = makeIcon(MDI_Help)
+export const Image = makeIcon(MDI_Image)
 export const ImageBroken = makeIcon(MDI_ImageBroken)
 export const Images = makeIcon(MDI_Images)
 export const Info = makeIcon(MDI_Info)
