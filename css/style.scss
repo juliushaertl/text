@@ -73,3 +73,12 @@ li.ProseMirror-selectednode:after {
     transform: translate3d(0, 0, 0);
   }
 }
+
+#viewer > div.modal-header > div.modal-title {
+  font-weight: bold;
+}
+
+#viewer > div.modal-header {
+  background-color: var(--color-main-background);
+  border-top: 3px solid var(--color-primary-element);
+}
