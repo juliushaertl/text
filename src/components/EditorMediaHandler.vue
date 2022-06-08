@@ -195,12 +195,10 @@ export default {
 		insertAttachmentMedia(name, fileId, mimeType, position = null, dirname = '') {
 			// inspired by the fixedEncodeURIComponent function suggested in
 			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
-			const src = dirname + '/'
+			const href = dirname + '/'
 				+ encodeURIComponent(name).replace(/[!'()*]/g, (c) => {
 					return '%' + c.charCodeAt(0).toString(16).toUpperCase()
 				})
-				// TODO change that
-				+ '#media'
 			// simply get rid of brackets to make sure link text is valid
 			// as it does not need to be unique and matching the real file name
 			const alt = name.replaceAll(/[[\]]/g, '')
@@ -209,7 +207,15 @@ export default {
 				? this.$editor.chain().focus(position)
 				: this.$editor.chain()
 
-			chain.setImage({ src, alt }).focus().run()
+			chain.insertContent(alt).focus().run()
+
+			const currentPosition = this.$editor.state.selection.anchor
+			this.$editor.chain()
+				.setTextSelection({ from: currentPosition - alt.length, to: currentPosition })
+				.setLink({ href })
+				.setTextSelection(currentPosition)
+				.focus()
+				.run()
 		},
 		insertAttachmentImage(name, fileId, mimeType, position = null, dirname = '') {
 			// inspired by the fixedEncodeURIComponent function suggested in
