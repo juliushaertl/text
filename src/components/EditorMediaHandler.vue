@@ -143,16 +143,14 @@ export default {
 				})
 		},
 		async uploadImageFile(file, position = null) {
-			if (!IMAGE_MIMES.includes(file.type)) {
-				showError(t('text', 'Image file format not supported'))
-				return
-			}
-
 			this.state.isUploadingImages = true
 
 			return this.$syncService.uploadImage(file)
 				.then((response) => {
-					this.insertAttachmentImage(response.data?.name, response.data?.id, position, response.data?.dirname)
+					this.insertAttachment(
+						response.data?.name, response.data?.id, file.type,
+						position, response.data?.dirname
+					)
 				})
 				.catch((error) => {
 					console.error(error)
@@ -176,7 +174,10 @@ export default {
 			this.state.isUploadingImages = true
 
 			return this.$syncService.insertImageFile(imagePath).then((response) => {
-				this.insertAttachmentImage(response.data?.name, response.data?.id, null, response.data?.dirname)
+				this.insertAttachment(
+					response.data?.name, response.data?.id, response.data?.mimetype,
+					null, response.data?.dirname
+				)
 			}).catch((error) => {
 				console.error(error)
 				showError(error?.response?.data?.error || error.message)
@@ -184,7 +185,33 @@ export default {
 				this.state.isUploadingImages = false
 			})
 		},
-		insertAttachmentImage(name, fileId, position = null, dirname = '') {
+		insertAttachment(name, fileId, mimeType, position = null, dirname = '') {
+			if (IMAGE_MIMES.includes(mimeType)) {
+				this.insertAttachmentImage(name, fileId, mimeType, position, dirname)
+				return
+			}
+			this.insertAttachmentMedia(name, fileId, mimeType, position, dirname)
+		},
+		insertAttachmentMedia(name, fileId, mimeType, position = null, dirname = '') {
+			// inspired by the fixedEncodeURIComponent function suggested in
+			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
+			const src = dirname + '/'
+				+ encodeURIComponent(name).replace(/[!'()*]/g, (c) => {
+					return '%' + c.charCodeAt(0).toString(16).toUpperCase()
+				})
+				// TODO change that
+				+ '#media'
+			// simply get rid of brackets to make sure link text is valid
+			// as it does not need to be unique and matching the real file name
+			const alt = name.replaceAll(/[[\]]/g, '')
+
+			const chain = position
+				? this.$editor.chain().focus(position)
+				: this.$editor.chain()
+
+			chain.setImage({ src, alt }).focus().run()
+		},
+		insertAttachmentImage(name, fileId, mimeType, position = null, dirname = '') {
 			// inspired by the fixedEncodeURIComponent function suggested in
 			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
 			const src = dirname + '/'
