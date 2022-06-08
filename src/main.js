@@ -1,6 +1,7 @@
 import store from './store.js'
 
 __webpack_nonce__ = btoa(OC.requestToken) // eslint-disable-line
+// change()
 __webpack_public_path__ = OC.linkTo('text', 'js/') // eslint-disable-line
 
 if (document.getElementById('app-content')) {
